@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>كيف تختار تخصصك الجامعي</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg1:#f6f7fb; --bg2:#ffffff; --ring:#e5e7eb; --txt:#0f172a; --muted:#64748b;
+      --ind:#4f46e5; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444;
+    }
+    body{background:linear-gradient(to bottom,var(--bg1),var(--bg2)); color:var(--txt)}
+    .card{border:1px solid var(--ring); border-radius:1rem; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    .badge{background:#eef2ff; color:#3730a3; padding:.2rem .5rem; border-radius:.75rem; font-size:.75rem}
+    .bar{height:.5rem; background:#e5e7eb; border-radius:.5rem; overflow:hidden}
+    .bar>div{height:100%; background:var(--ind)}
+    .pill{border:1px solid #e5e7eb; border-radius:.75rem; padding:.25rem .5rem; background:#fafafa; font-size:.75rem}
+    .heroGrad{background:linear-gradient(135deg,#eef2ff 0%,#ffffff 45%,#fdf4ff 100%)}
+    .iconCard{border-radius:1rem; aspect-ratio:16/9; display:grid; place-items:center; color:#fff; font-size:42px; font-weight:700; position:relative; overflow:hidden}
+    .iconCard small{position:absolute; inset:auto 10px 10px auto; background:rgba(255,255,255,.2); padding:.1rem .5rem; border-radius:.5rem; font-size:12px}
+    .svgbg{position:absolute; inset:0; opacity:.2}
+    .btn{padding:.5rem .8rem; border-radius:.75rem; border:1px solid var(--ring); background:#fff}
+    .btn-ghost{padding:.5rem .8rem; border-radius:.75rem; border:1px dashed var(--ring); background:transparent}
+    .btn-primary{background:var(--ind); color:#fff; border-color:transparent}
+    .btn-neutral{background:#fafafa}
+    .toggle{display:flex; gap:.5rem; align-items:center}
+    .muted{color:var(--muted)}
+    [data-theme="dark"] body{background:#0b1020; color:#e6e8ef}
+    [data-theme="dark"] .card{background:#0f1529; border-color:#1f2540}
+    [data-theme="dark"] .badge{background:#262b53; color:#cbd5ff}
+    [data-theme="dark"] .pill{background:#0b1020; border-color:#29304e}
+    @media print{.no-print{display:none}}
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="heroGrad">
+    <div class="mx-auto max-w-6xl px-4 py-10 md:py-12 grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold">كيف تختار تخصصك الجامعي؟</h1>
+        <p class="mt-3 text-slate-600">المنتج مجاني، والرابط اللي بالنهاية؟ اختصار للطريق عليك 🚀</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="badge">نتائج فورية</span>
+          <span class="badge">مقارنة مرنة</span>
+          <span class="badge">خطة ٩٠ يوم</span>
+        </div>
+        <div class="mt-6 flex flex-wrap gap-2 no-print">
+          <button id="startBtn" class="btn btn-primary">ابدأ الآن</button>
+          <button id="shareBtn" class="btn">مشاركة نتيجتي</button>
+          <button onclick="window.print()" class="btn">طباعة</button>
+          <button id="resetBtn" class="btn-ghost">إعادة الضبط</button>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-4 no-print">
+          <label class="toggle"><input type="checkbox" id="darkToggle"> وضع داكن</label>
+          <label class="toggle"><input type="checkbox" id="neutralToggle"> وضع محايد (أهدأ)</label>
+        </div>
+      </div>
+      <div class="grid gap-3">
+        <div class="iconCard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+          <svg class="svgbg" viewBox="0 0 200 100" preserveAspectRatio="none">
+            <circle cx="40" cy="30" r="40" fill="#fff"/><rect x="110" y="-10" width="120" height="120" fill="#fff"/>
+          </svg>
+          <div>🎓</div><small>ابدأ الاستكشاف</small>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="iconCard" style="background:linear-gradient(135deg,#10b981,#22c55e)"><div>🧭</div><small>نتائج موجّهة</small></div>
+          <div class="iconCard" style="background:linear-gradient(135deg,#f59e0b,#f97316)"><div>📊</div><small>مقارنة سهلة</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="mx-auto max-w-6xl px-4 py-6 space-y-6">
+    <!-- الاستبيان -->
+    <section id="quiz" class="card p-4">
+      <h2 class="text-lg font-semibold mb-1">حدّد مستوى ميولك لكل محور</h2>
+      <p class="text-sm muted mb-4">من 0 (لا يهمني) إلى 10 (مهم جدًا)</p>
+      <div id="questions" class="grid gap-5 md:grid-cols-2"></div>
+      <div class="mt-4 text-sm muted bg-slate-50 dark:bg-[#0b1020] p-3 rounded-xl">
+        لا توجد إجابة صحيحة أو خاطئة—اختر ما يمثّلك الآن. يمكنك تعديل القيم في أي وقت.
+      </div>
+    </section>
+    <!-- النتائج -->
+    <section class="card p-4">
+      <h2 class="text-lg font-semibold mb-4">أفضل النتائج</h2>
+      <div id="topResults" class="grid gap-4 md:grid-cols-3"></div>
+      <div class="mt-6">
+        <h3 class="font-semibold mb-2">نظرة سريعة</h3>
+        <div id="chart" class="grid gap-2 md:grid-cols-2"></div>
+      </div>
+    </section>
+
+    <!-- المقارنة -->
+    <section class="card p-4" id="compareSection">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-semibold">المقارنة</h2>
+        <div class="no-print flex gap-2">
+          <button id="clearCompare" class="btn">مسح المقارنة</button>
+        </div>
+      </div>
+      <div id="compareRoot" class="text-sm muted">أضِف تخصّصات من النتائج أو الدليل لمقارنتها هنا.</div>
+    </section>
+
+    <!-- دليل التخصصات -->
+    <section class="card p-4">
+      <h2 class="text-lg font-semibold mb-3">استكشف التخصصات</h2>
+      <div class="mb-3 grid md:grid-cols-3 gap-2">
+        <input id="search" class="border rounded-xl px-3 py-2 md:col-span-2" placeholder="ابحث بالاسم أو المهارات أو الإيموجي (مثلاً: 🩺، 💻)…">
+        <button id="clearSearch" class="btn">مسح</button>
+      </div>
+      <div id="guide" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3"></div>
+    </section>
+
+    <!-- أدوات الخريجين -->
+    <section class="card p-4">
+      <h2 class="text-lg font-semibold mb-3">أدوات الخريجين</h2>
+
+      <!-- 1) مولّد الكلمات المفتاحية -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">١) كلمات مفتاحية للسيرة وLinkedIn</h3>
+        <p class="text-sm muted mb-2">حسب أعلى تخصّصات ملائمة لك الآن.</p>
+        <div id="cvKeywords" class="flex flex-wrap gap-2"></div>
+        <div class="mt-2">
+          <button id="copyKeywordsBtn" class="btn">نسخ الكلمات</button>
+        </div>
+      </div>
+
+      <hr class="my-4"/>
+
+      <!-- 2) أفكار مشاريع -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">٢) أفكار مشاريع/بورتفوليو</h3>
+        <p class="text-sm muted mb-2">مشاريع عملية تقوّي سيرتك — أضِف ما يعجبك لخطة ٩٠ يوم.</p>
+        <div id="projectIdeas" class="grid gap-3 sm:grid-cols-2 md:grid-cols-3"></div>
+      </div>
+
+      <hr class="my-4"/>
+
+      <!-- 3) خطة ٩٠ يوم -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">٣) خطة ٩٠ يوم بعد التخرج</h3>
+        <div class="bar mb-2"><div id="planProgress" style="width:0%"></div></div>
+        <div class="text-sm muted mb-3">تقدّمك: <b id="planPercent">0%</b></div>
+        <div id="planList" class="grid gap-2 md:grid-cols-2"></div>
+        <div class="mt-3 flex gap-2">
+          <button id="addCustomTask" class="btn">إضافة مهمة مخصّصة</button>
+          <button id="clearPlan" class="btn-ghost">مسح الخطة</button>
+          <button onclick="window.print()" class="btn">طباعة الخطة</button>
+        </div>
+      </div>
+
+      <hr class="my-4"/>
+
+      <!-- 4) بنك أسئلة مقابلات -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">٤) بنك أسئلة مقابلات حسب التخصص</h3>
+        <div class="flex flex-wrap gap-2 mb-3" id="interviewMajorTabs"></div>
+        <div id="interviewQs" class="grid gap-2"></div>
+        <div class="mt-2">
+          <button id="copyQsBtn" class="btn">نسخ كل الأسئلة الظاهرة</button>
+        </div>
+      </div>
+
+      <hr class="my-4"/>
+
+      <!-- 5) مولّد قالب سيرة ذاتية -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">٥) مولّد قالب سيرة ذاتية سريع</h3>
+        <p class="text-sm muted mb-2">يستخدم أعلى تخصّصاتك لإخراج أقسام مقترحة.</p>
+        <div class="flex gap-2">
+          <button id="genCVAr" class="btn">توليد سيرة (عربي)</button>
+          <button id="genCVEn" class="btn">Generate CV (English)</button>
+        </div>
+      </div>
+
+      <hr class="my-4"/>
+
+      <!-- 6) محاكي مقابلة مع مؤقّت (بديل الأداة القديمة) -->
+      <div id="mockInterview">
+        <h3 class="font-semibold mb-2">٦) محاكي مقابلة — ٩٠ ثانية</h3>
+        <p class="text-sm muted mb-2">يعرض سؤال مقابلة مرتبط بتخصّصاتك، مع عدّاد للوقت.</p>
+        <div class="card p-3 mb-2">
+          <div id="miQuestion" class="text-sm">اضغط "سؤال جديد" للبدء.</div>
+          <div class="flex items-center gap-3 mt-3">
+            <button id="miNew" class="btn">سؤال جديد</button>
+            <button id="miCopy" class="btn-ghost text-xs">نسخ السؤال</button>
+            <div class="ml-auto text-sm"><span class="pill">⏱️ <b id="miTimer">90</b>s</span></div>
+          </div>
+        </div>
+        <div class="text-xs muted">نصيحة: استخدم إطار STAR (الموقف-المهمة-الإجراء-النتيجة).</div>
+      </div>
+    </section>
+
+    <!-- ✨ الإعلان الداخلي المطلوب -->
+    <section class="card p-4 no-print">
+      <div class="flex items-center gap-3">
+        <div class="text-2xl">📚</div>
+        <div class="grow">
+          <div class="font-semibold">لا تشيل هم الواجب ولا العرض!</div>
+          <div class="text-sm text-slate-600">كلها أساعدك فيها بسعر رمزي ✅</div>
+        </div>
+        <a href="https://t.me/je80r" target="_blank" rel="noopener" class="btn btn-primary whitespace-nowrap">
+          تواصل معي
+        </a>
+      </div>
+    </section>
+  </main>
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 no-print">
+    <div class="card max-w-2xl w-full overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
+        <h3 id="modalTitle" class="font-semibold"></h3>
+        <button id="closeModal" class="btn">إغلاق</button>
+      </div>
+      <div class="p-4 text-sm leading-7">
+        <div id="modalIcon" class="iconCard mb-3" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+          <svg class="svgbg" viewBox="0 0 200 100" preserveAspectRatio="none">
+            <circle cx="40" cy="30" r="40" fill="#fff"/><rect x="110" y="-10" width="120" height="120" fill="#fff"/>
+          </svg>
+          <div id="modalEmoji" style="font-size:48px">🎓</div><small id="modalBadge">تفاصيل</small>
+        </div>
+        <div><b>التخصص:</b> <span id="mName"></span></div>
+        <div><b>ملخص:</b> <span id="mSummary"></span></div>
+        <div><b>مهارات أساسية:</b> <span id="mSkills"></span></div>
+        <div id="mBranchesWrap"><b>الفروع:</b> <span id="mBranches"></span></div>
+        <div id="mCoursesWrap"><b>مواد أساسية:</b> <span id="mCourses"></span></div>
+        <div><b>مجالات عمل:</b> <span id="mCareers"></span></div>
+        <div><b>مسار الدراسة:</b> <span id="mStudy"></span></div>
+        <div class="grid md:grid-cols-2 gap-2 mt-2">
+          <div id="mPros" class="bg-slate-50 rounded-lg p-3"></div>
+          <div id="mCons" class="bg-slate-50 rounded-lg p-3"></div>
+        </div>
+        <div class="text-xs muted mt-2" id="mTips"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    /* ================= أساسيات / بيانات ================= */
+    const QUESTIONS = [
+      { key:"math",       title:"أحب الرياضيات والمنطق" },
+      { key:"tech",       title:"أستمتع بالتقنية والبرمجة" },
+      { key:"bio",        title:"أميل للمواد الحيوية (أحياء/كيمياء)" },
+      { key:"literature", title:"أحب القراءة والكتابة والتحليل" },
+      { key:"design",     title:"أميل للفن والتصميم" },
+      { key:"people",     title:"أحب العمل مع الناس وخدمتهم" },
+      { key:"business",   title:"مهتم بريادة الأعمال والإدارة" },
+      { key:"longStudy",  title:"أتحمّل دراسات طويلة وضغط" },
+      { key:"salary",     title:"الاستقرار المالي مهم جدًا لي" },
+      { key:"creative",   title:"أفضل العمل الإبداعي المتجدد" },
+    ];
+
+    const ICONS = {
+      cs:   { emoji:"💻", grad:["#0ea5e9","#6366f1"] },
+      eng:  { emoji:"🛠️", grad:["#10b981","#22c55e"] },
+      med:  { emoji:"🩺", grad:["#ef4444","#f59e0b"] },
+      pharm:{ emoji:"💊", grad:["#8b5cf6","#22d3ee"] },
+      biz:  { emoji:"📈", grad:["#f59e0b","#f97316"] },
+      acct: { emoji:"🧮", grad:["#06b6d4","#0ea5e9"] },
+      lit:  { emoji:"📚", grad:["#14b8a6","#84cc16"] },
+      law:  { emoji:"⚖️", grad:["#a3a3a3","#4b5563"] },
+      design:{emoji:"🎨", grad:["#f43f5e","#db2777"] },
+      arch: { emoji:"🏛️", grad:["#22c55e","#84cc16"] },
+      ds:   { emoji:"📊", grad:["#6366f1","#22d3ee"] },
+      psy:  { emoji:"🧠", grad:["#06b6d4","#10b981"] },
+    };
+
+    const BRANCHES = {
+      cs:["برمجة الويب (واجهات/خلفية)","أنظمة وذكاء اصطناعي","أمن سيبراني"],
+      eng:["كهربائية","ميكانيكية","صناعية"],
+      med:["باطنة","جراحة","أطفال"],
+      pharm:["سريرية","صناعية","مجتمعية"],
+      biz:["تسويق","تمويل","منتجات"],
+      acct:["مالية","تكاليف","تدقيق"],
+      lit:["لسانيات","نقد","ترجمة"],
+      law:["عقود","شركات","جنائي"],
+      design:["هوية بصرية","واجهات UX/UI","حملات"],
+      arch:["تصميم معماري","تخطيط حضري","تصميم داخلي"],
+      ds:["تحليل بيانات","تعلم آلي","هندسة بيانات"],
+      psy:["إرشاد","تربوي","إكلينيكي"]
+    };
+
+    const MAJORS = [
+      { id:"cs",  name:"علوم الحاسب",
+        weights:{math:.7,tech:1,bio:.05,literature:.1,design:.2,people:.3,business:.3,longStudy:.6,salary:.85,creative:.4},
+        summary:"برمجة، خوارزميات، بناء الأنظمة والتطبيقات.",
+        branches:BRANCHES.cs,
+        branchesNote:"الويب يجمع بين الواجهات والتكامل مع قواعد البيانات؛ الأمن يركّز على حماية الأنظمة.",
+        skills:["برمجة","خوارزميات","تفكير منطقي","هندسة برمجيات"],
+        careers:["مطور برمجيات","مهندس نظم","عالم بيانات","مهندس ذكاء اصطناعي"],
+        study:"٤ سنوات + مشاريع وتدريب.",
+        coreCourses:["هياكل بيانات","خوارزميات","قواعد بيانات","شبكات","ذكاء اصطناعي"],
+        pros:["طلب وظيفي مرتفع","إمكانية العمل عن بعد","تنوع المسارات"],
+        cons:["تعلم مستمر","جلسات طويلة أمام الحاسوب"],
+        tips:"ابنِ بورتفوليو وشارك في هاكاثونات."
+      },
+      { id:"eng", name:"الهندسة",
+        weights:{math:.9,tech:.6,bio:.1,literature:.05,design:.3,people:.3,business:.3,longStudy:.7,salary:.8,creative:.3},
+        summary:"حل مسائل معقّدة وتصميم حلول عملية.",
+        branches:BRANCHES.eng,
+        branchesNote:"الميكانيكية للأجهزة والحركة، الكهربائية للقدرة والتحكم، الصناعية لتحسين العمليات.",
+        skills:["رياضيات متقدمة","نمذجة","تحليل","رسم هندسي"],
+        careers:["مهندس كهربائي","مهندس ميكانيكي","مهندس صناعي"],
+        study:"٤–٥ سنوات + معامل.",
+        coreCourses:["فيزياء هندسية","دارات","قوى/موائع","تحكم","رسم هندسي"],
+        pros:["أساس علمي قوي","تطبيقات صناعية واسعة"],
+        cons:["مشاريع مرهقة","مستلزمات معامل"],
+        tips:"ركز على الرياضيات والفيزياء وابدأ تدريبًا صيفيًا."
+      },
+      { id:"med", name:"الطب",
+        weights:{math:.4,tech:.2,bio:1,literature:.2,design:.05,people:.7,business:.2,longStudy:1,salary:.8,creative:.2},
+        summary:"تشخيص وعلاج ورعاية صحية.",
+        branches:BRANCHES.med,
+        branchesNote:"التخصصات تتطلب مفاضلات لاحقة ودوامًا سريريًا مكثفًا.",
+        skills:["أحياء","كيمياء","تواصل مع المرضى","دقة"],
+        careers:["طبيب عام","تخصصات طبية","بحث طبي"],
+        study:"٦–٧ سنوات + امتياز وتخصص.",
+        coreCourses:["تشريح","فسيولوجيا","أدوية","باطنة","جراحة"],
+        pros:["رسالة إنسانية","مكانة اجتماعية"],
+        cons:["سنوات دراسة طويلة","نوبات عمل"],
+        tips:"تطوّع في مرافق صحية واكسب خبرة تواصل."
+      },
+      { id:"pharm", name:"الصيدلة",
+        weights:{math:.5,tech:.2,bio:.9,literature:.2,design:.05,people:.5,business:.3,longStudy:.8,salary:.7,creative:.2},
+        summary:"الأدوية وتركيباتها واستخدامها الآمن.",
+        branches:BRANCHES.pharm,
+        branchesNote:"السريرية مع الفريق الطبي؛ الصناعية في خطوط الإنتاج والجودة.",
+        skills:["كيمياء دوائية","صيدلة سريرية","تواصل"],
+        careers:["صيدلي سريري","صيدلي مجتمعي","صناعة دوائية"],
+        study:"٥–٦ سنوات مع تدريب.",
+        coreCourses:["كيمياء عضوية","صيدلانيات","علم الأدوية","ميكروبيولوجيا"],
+        pros:["فرص بالمستشفيات والصناعة","مسارات بحثية"],
+        cons:["حفظ كثير","مسؤولية عالية"],
+        tips:"تدريب صيفي في صيدلية أو مصنع."
+      },
+      { id:"biz", name:"إدارة الأعمال",
+        weights:{math:.3,tech:.2,bio:.05,literature:.3,design:.1,people:.6,business:1,longStudy:.5,salary:.7,creative:.4},
+        summary:"تشغيل الشركات، التسويق، التمويل، والاستراتيجية.",
+        branches:BRANCHES.biz,
+        branchesNote:"التسويق للطلب، التمويل للنماذج المالية، المنتجات للتطوير والقياس.",
+        skills:["تسويق","تمويل","تحليل أعمال","تواصل"],
+        careers:["مختص تسويق","محلل أعمال","مدير منتجات","رائد أعمال"],
+        study:"٤ سنوات أو + ماجستير إدارة.",
+        coreCourses:["مبادئ إدارة","محاسبة","اقتصاد","سلوك تنظيمي","استراتيجية"],
+        pros:["مرونة وظيفية","ملائمة لريادة الأعمال"],
+        cons:["منافسة عالية","حاجة لعلاقات"],
+        tips:"ابدأ مشروعًا صغيرًا أو نادي ريادة."
+      },
+      { id:"acct", name:"المحاسبة",
+        weights:{math:.6,tech:.2,bio:.05,literature:.2,design:.05,people:.4,business:.7,longStudy:.5,salary:.8,creative:.2},
+        summary:"قياس الأداء المالي والتدقيق والضرائب.",
+        branches:BRANCHES.acct,
+        branchesNote:"المالية للتقارير، التكاليف للتصنيع، التدقيق للامتثال.",
+        skills:["معايير محاسبية","تفاصيل","أرقام"],
+        careers:["محاسب","مدقق","محلل مالي"],
+        study:"٤ سنوات + زمالات اختيارية.",
+        coreCourses:["محاسبة مالية","محاسبة إدارية","تدقيق","ضرائب"],
+        pros:["طلب مستمر","مسار شهادات واضح"],
+        cons:["روتين","مواسم ضغط"],
+        tips:"استهدف CPA/CMA مبكرًا."
+      },
+      { id:"lit", name:"اللغة والأدب",
+        weights:{math:.05,tech:.1,bio:.05,literature:1,design:.1,people:.5,business:.2,longStudy:.6,salary:.5,creative:.6},
+        summary:"قراءة ونقد وكتابة وبلاغة.",
+        branches:BRANCHES.lit,
+        branchesNote:"الترجمة تطبيقية، واللسانيات تحليل لغوي، والنقد للأدب.",
+        skills:["كتابة","تحليل نصوص","تحرير"],
+        careers:["معلم لغة","كاتب/محرر","ترجمة"],
+        study:"٤ سنوات.",
+        coreCourses:["نقد أدبي","بلاغة","لسانيات","أدب حديث"],
+        pros:["مهارات تعبير عالية","مناسب للإعلام/النشر"],
+        cons:["فرص تنافسية","دخل متفاوت"],
+        tips:"مدونة/قناة قراءة ونماذج كتابية."
+      },
+      { id:"law", name:"القانون",
+        weights:{math:.1,tech:.1,bio:.05,literature:.7,design:.05,people:.7,business:.4,longStudy:.7,salary:.6,creative:.3},
+        summary:"تشريعات، عقود، مرافعات وامتثال.",
+        branches:BRANCHES.law,
+        branchesNote:"العقود للشركات، الجنائي للمرافعات، الشركات للحوكمة.",
+        skills:["منطق","صياغة","تفاوض"],
+        careers:["محامي","مستشار قانوني","امتثال"],
+        study:"٤–٥ سنوات + تدريب.",
+        coreCourses:["قانون مدني","جنائي","تجاري","دستوري"],
+        pros:["تنوع تخصصات","أثر مجتمعي"],
+        cons:["حِجاج وضغط","قراءة مكثفة"],
+        tips:"عيادات قانونية ومسابقات مرافعة."
+      },
+      { id:"design", name:"تصميم جرافيك",
+        weights:{math:.05,tech:.4,bio:.05,literature:.2,design:1,people:.4,business:.3,longStudy:.5,salary:.5,creative:1},
+        summary:"هوية بصرية وتواصل بصري.",
+        branches:BRANCHES.design,
+        branchesNote:"الهوية للعلامات، والواجهات للتجربة، والحملات للتواصل المرئي.",
+        skills:["نظريات تصميم","أدوات تصميم","تفكير بصري"],
+        careers:["مصمم جرافيك","مخرج فني","واجهات"],
+        study:"٤ سنوات أو دورات مكثفة.",
+        coreCourses:["أساسيات التصميم","طباعة","علامة تجارية","واجهات"],
+        pros:["إبداع وحرية فنية","فرص عمل حر"],
+        cons:["منافسة عالية","ذائقة العملاء متفاوتة"],
+        tips:"بورتفوليو وDribbble/Behance."
+      },
+      { id:"arch", name:"الهندسة المعمارية",
+        weights:{math:.7,tech:.4,bio:.05,literature:.2,design:.7,people:.4,business:.3,longStudy:.6,salary:.7,creative:.8},
+        summary:"تصميم المباني والمساحات.",
+        branches:BRANCHES.arch,
+        branchesNote:"التصميم للمشاريع، والتخطيط للمناطق، والداخلي للفراغات.",
+        skills:["رسم معماري","نمذجة","إخراج معماري"],
+        careers:["معماري","مخطط حضري","مصمم داخلي"],
+        study:"٥ سنوات + تدريب.",
+        coreCourses:["تصميم معماري","إنشاءات","تاريخ العمارة","استدامة"],
+        pros:["دمج الفن بالهندسة","أثر بصري على المدن"],
+        cons:["ساعات استوديو طويلة","برامج ثقيلة"],
+        tips:"وثّق أعمال الاستديو بمحفظة رقمية."
+      },
+      { id:"ds", name:"علوم البيانات",
+        weights:{math:.8,tech:.8,bio:.2,literature:.2,design:.2,people:.3,business:.4,longStudy:.6,salary:.85,creative:.4},
+        summary:"تحليل البيانات وبناء نماذج للتنبؤ.",
+        branches:BRANCHES.ds,
+        branchesNote:"التحليل للاستبصار، التعلم الآلي للنمذجة، والهندسة للبنية.",
+        skills:["إحصاء","برمجة","تعلم آلي"],
+        careers:["عالم بيانات","محلل بيانات","مهندس بيانات"],
+        study:"٤ سنوات + مشاريع.",
+        coreCourses:["احتمالات","إحصاء","تعلم آلي","تصور بيانات"],
+        pros:["رواتب جيدة","طلب متزايد"],
+        cons:["حاجة لخبرة مجال","تنظيف بيانات مرهق"],
+        tips:"Kaggle ومشاريع واقعية."
+      },
+      { id:"psy", name:"علم النفس",
+        weights:{math:.15,tech:.1,bio:.4,literature:.5,design:.05,people:.8,business:.3,longStudy:.6,salary:.55,creative:.4},
+        summary:"فهم السلوك البشري والصحة النفسية.",
+        branches:BRANCHES.psy,
+        branchesNote:"الإرشاد للدعم، التربوي للتعليم، الإكلينيكي للعلاج.",
+        skills:["بحث","استماع نشط","أخلاقيات"],
+        careers:["أخصائي نفسي","إرشاد","بحث"],
+        study:"٤ سنوات + ترخيص.",
+        coreCourses:["مدخل علم النفس","علم نفس نمو","قياس وتقويم","إرشاد"],
+        pros:["أثر إنساني عميق","مجالات استشارية"],
+        cons:["ترخيص صارم","تعامل مع حالات حساسة"],
+        tips:"ساعات إشرافية ومبادرات دعم."
+      }
+    ];
+
+    const STORAGE_KEY="major-chooser-pro-plus-v1";
+    let answers=readState("answers") || Object.fromEntries(QUESTIONS.map(q=>[q.key,5]));
+    let compareIds=readState("compare") || [];
+    let plan=readState("plan") || [];
+    function readState(k){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY+"::"+k)||"null")}catch{return null} }
+    function writeState(k,v){ try{localStorage.setItem(STORAGE_KEY+"::"+k,JSON.stringify(v))}catch{} }
+
+    function computeScores(a){
+      return MAJORS.map(m=>{
+        const sumW=Object.values(m.weights).reduce((x,y)=>x+y,0);
+        let acc=0; for(const k in m.weights){ acc+=((a[k]||0)/10)*m.weights[k]; }
+        const score=(acc/sumW)*100;
+        return {id:m.id,name:m.name,score,ref:m};
+      }).sort((x,y)=>y.score-x.score).map((x,i)=>({...x,rank:i+1}));
+    }
+
+    const qRoot=document.getElementById("questions");
+    const topRoot=document.getElementById("topResults");
+    const chartRoot=document.getElementById("chart");
+    const compareRoot=document.getElementById("compareRoot");
+    const clearCompareBtn=document.getElementById("clearCompare");
+    const search=document.getElementById("search");
+    const startBtn=document.getElementById("startBtn");
+    const shareBtn=document.getElementById("shareBtn");
+    const modal=document.getElementById("modal");
+    const closeModal=document.getElementById("closeModal");
+    const darkToggle=document.getElementById("darkToggle");
+    const neutralToggle=document.getElementById("neutralToggle");
+
+    function iconCardHTML(id,label,small){
+      const {emoji,grad}=ICONS[id]||{emoji:"🎓",grad:["#6366f1","#8b5cf6"]};
+      return `
+        <div class="iconCard" style="background:linear-gradient(135deg,${grad[0]},${grad[1]})">
+          <svg class="svgbg" viewBox="0 0 200 100" preserveAspectRatio="none">
+            <circle cx="40" cy="30" r="40" fill="#fff"/><rect x="110" y="-10" width="120" height="120" fill="#fff"/>
+          </svg>
+          <div>${emoji}</div>
+          ${small?`<small>${small}</small>`:""}
+        </div>`;
+    }
+
+    function renderQuestions(){
+      qRoot.innerHTML="";
+      QUESTIONS.forEach(q=>{
+        const v=answers[q.key];
+        const el=document.createElement("div");
+        el.className="card p-4";
+        el.innerHTML=`
+          <div class="mb-3 flex items-center justify-between">
+            <div class="font-medium">${q.title}</div>
+            <span class="badge font-mono">${v}</span>
+          </div>
+          <input type="range" min="0" max="10" step="1" value="${v}" class="w-full">
+        `;
+        el.querySelector("input").addEventListener("input",e=>{
+          answers[q.key]=Number(e.target.value);
+          writeState("answers",answers);
+          el.querySelector(".badge").textContent=answers[q.key];
+          renderResults();
+        });
+        qRoot.appendChild(el);
+      });
+    }
+
+    function renderResults(){
+      const results=computeScores(answers);
+      const top=results.slice(0,3);
+
+      topRoot.innerHTML="";
+      top.forEach(r=>{
+        const c=document.createElement("div");
+        c.className="card overflow-hidden";
+        c.innerHTML=`
+          ${iconCardHTML(r.id,r.name,"الأفضل #"+r.rank)}
+          <div class="p-4">
+            <div class="text-sm muted mb-2"><b>${r.name}</b> — ${r.ref.summary}</div>
+            <div class="text-xs mb-1"><b>الفروع:</b> ${(r.ref.branches||[]).join("، ")}.</div>
+            <div class="text-xs muted mb-2">${r.ref.branchesNote||""}</div>
+            <div class="bar mb-1"><div style="width:${Math.round(r.score)}%"></div></div>
+            <div class="flex justify-between text-xs muted">
+              <span>الملاءمة</span><span class="font-semibold">${Math.round(r.score)}%</span>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              ${r.ref.skills.slice(0,3).map(s=>`<span class="pill">${s}</span>`).join("")}
+            </div>
+            <div class="mt-3 flex gap-2">
+              <button class="btn" data-add="${r.id}">➕ أضِف للمقارنة</button>
+              <button class="btn btn-neutral" data-details="${r.id}">تفاصيل أكثر</button>
+            </div>
+          </div>
+        `;
+        c.querySelector(`[data-add="${r.id}"]`).addEventListener("click",()=>{
+          if(!compareIds.includes(r.id)){ compareIds.push(r.id); writeState("compare",compareIds); }
+          renderCompare();
+          renderGraduateTools();
+        });
+        c.querySelector(`[data-details="${r.id}"]`).addEventListener("click",()=>openModal(r.ref));
+        topRoot.appendChild(c);
+      });
+
+      chartRoot.innerHTML="";
+      results.slice(0,6).forEach(r=>{
+        const row=document.createElement("div");
+        row.className="card p-3";
+        row.innerHTML=`
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-sm"><b>${r.name}</b></div>
+            <div class="pill">${Math.round(r.score)}%</div>
+          </div>
+          <div class="bar"><div style="width:${Math.round(r.score)}%"></div></div>
+        `;
+        chartRoot.appendChild(row);
+      });
+
+      renderGuide();
+      renderCompare();
+      renderGraduateTools();
+    }
+
+    function renderCompare(){
+      const results=computeScores(answers);
+      const selected=MAJORS.filter(m=>compareIds.includes(m.id));
+      if(!selected.length){ compareRoot.textContent="أضِف تخصّصات من النتائج أو الدليل لمقارنتها هنا."; return; }
+      compareRoot.innerHTML="";
+      const grid=document.createElement("div");
+      grid.className="grid gap-3 sm:grid-cols-2 md:grid-cols-3";
+      selected.forEach(m=>{
+        const r=results.find(x=>x.id===m.id);
+        const box=document.createElement("div");
+        box.className="card p-4 text-sm";
+        box.innerHTML=`
+          ${iconCardHTML(m.id,m.name,"للمقارنة")}
+          <div class="mt-2 font-semibold"><b>${m.name}</b></div>
+          <div class="text-xs">الفروع: ${(m.branches||[]).join("، ")}</div>
+          <div class="bar my-1"><div style="width:${Math.round(r.score)}%"></div></div>
+          <div class="text-xs mb-2 muted">الملاءمة: <b>${Math.round(r.score)}%</b></div>
+          <ul class="list-disc list-inside text-slate-600 space-y-1">
+            <li><b>مهارات:</b> ${m.skills.slice(0,3).join("، ")}</li>
+            <li><b>فرص:</b> ${m.careers.slice(0,2).join("، ")}</li>
+            <li><b>مميزات:</b> ${(m.pros||[]).slice(0,2).join("، ")}</li>
+          </ul>
+          <div class="mt-2">
+            <button class="btn-ghost text-xs" data-remove="${m.id}">إزالة</button>
+          </div>
+        `;
+        box.querySelector(`[data-remove="${m.id}"]`).addEventListener("click",()=>{
+          compareIds=compareIds.filter(x=>x!==m.id);
+          writeState("compare",compareIds);
+          renderCompare(); renderGraduateTools();
+        });
+        grid.appendChild(box);
+      });
+      compareRoot.appendChild(grid);
+    }
+    document.getElementById("clearCompare").addEventListener("click",()=>{ compareIds=[]; writeState("compare",compareIds); renderCompare(); renderGraduateTools(); });
+
+    function valueFitBadges(m){
+      const map={salary:"💰 الاستقرار", creative:"✨ الإبداع", people:"🤝 التعامل", longStudy:"🎓 دراسة طويلة"};
+      const pairs=Object.entries(m.weights).filter(([k])=>map[k]).sort((a,b)=>b[1]-a[1]).slice(0,3);
+      return pairs.map(([k,v])=>`<span class="pill">${map[k]}: ${(v*10).toFixed(0)}/10</span>`).join("");
+    }
+    function renderGuide(){
+      const q=(search.value||"").trim().toLowerCase();
+      const root=document.getElementById("guide");
+      root.innerHTML="";
+      MAJORS.filter(m=>{
+        if(!q) return true;
+        const blob=[m.name,m.summary,(m.branches||[]).join(" "),m.branchesNote||"",...m.skills,...m.careers,...(m.coreCourses||[]),(ICONS[m.id]?.emoji||"")].join(" ").toLowerCase();
+        return blob.includes(q) || (q==="🩺" && m.id==="med") || (q==="💻" && m.id==="cs");
+      }).forEach(m=>{
+        const c=document.createElement("div");
+        c.className="card overflow-hidden";
+        c.innerHTML=`
+          ${iconCardHTML(m.id,m.name,"استكشف")}
+          <div class="p-4 text-sm space-y-2">
+            <div><b>${m.name}</b> — ${m.summary}</div>
+            <div class="text-xs"><b>الفروع:</b> ${(m.branches||[]).join("، ")}</div>
+            <div class="text-xs muted">${m.branchesNote||""}</div>
+            <div class="flex flex-wrap gap-2">${m.skills.map(s=>`<span class="pill">${s}</span>`).join("")}</div>
+            <div class="text-xs"><b>مواد أساسية:</b> ${m.coreCourses.join("، ")}</div>
+            <div class="text-xs"><b>مجالات عمل:</b> ${m.careers.join("، ")}</div>
+            <div class="text-xs"><b>مسار الدراسة:</b> ${m.study}</div>
+            <div class="flex flex-wrap gap-2 pt-1">${valueFitBadges(m)}</div>
+            <div class="pt-1">
+              <button class="btn btn-neutral" data-details="${m.id}">تفاصيل أكثر</button>
+              <button class="btn" data-add="${m.id}">➕ أضِف للمقارنة</button>
+            </div>
+          </div>
+        `;
+        c.querySelector(`[data-details="${m.id}"]`).addEventListener("click",()=>openModal(m));
+        c.querySelector(`[data-add="${m.id}"]`).addEventListener("click",()=>{
+          if(!compareIds.includes(m.id)){ compareIds.push(m.id); writeState("compare",compareIds); }
+          renderCompare(); renderGraduateTools();
+        });
+        root.appendChild(c);
+      });
+    }
+
+    function openModal(m){
+      const g=ICONS[m.id]?.grad||["#6366f1","#8b5cf6"];
+      document.getElementById("modalIcon").style.background=`linear-gradient(135deg,${g[0]},${g[1]})`;
+      document.getElementById("modalEmoji").textContent=(ICONS[m.id]||{}).emoji||"🎓";
+      document.getElementById("modalTitle").textContent=m.name;
+      document.getElementById("mName").innerHTML = "<b>"+m.name+"</b>";
+      document.getElementById("mSummary").textContent=m.summary;
+      document.getElementById("mSkills").textContent=m.skills.join("، ");
+      document.getElementById("mCourses").textContent=(m.coreCourses||[]).join("، ");
+      document.getElementById("mCoursesWrap").style.display=m.coreCourses?.length?"block":"none";
+      document.getElementById("mCareers").textContent=m.careers.join("، ");
+      document.getElementById("mStudy").textContent=m.study;
+      document.getElementById("mPros").innerHTML="<b>مميزات</b><ul class='list-disc list-inside mt-1'>"+(m.pros||[]).map(x=>`<li>${x}</li>`).join("")+"</ul>";
+      document.getElementById("mCons").innerHTML="<b>تحديات</b><ul class='list-disc list-inside mt-1'>"+(m.cons||[]).map(x=>`<li>${x}</li>`).join("")+"</ul>";
+      const b=(m.branches||[]).map(x=>"• "+x).join(" — ");
+      document.getElementById("mBranches").textContent=b;
+      document.getElementById("mBranchesWrap").style.display=(m.branches&&m.branches.length)?"block":"none";
+      document.getElementById("mTips").innerHTML="<b>نصيحة:</b> "+(m.tips||"");
+      modal.classList.remove("hidden"); modal.classList.add("flex");
+    }
+    closeModal.addEventListener("click",()=>{ modal.classList.add("hidden"); modal.classList.remove("flex"); });
+    modal.addEventListener("click",e=>{ if(e.target===modal){ closeModal.click(); } });
+
+    const KEYWORDS={
+      cs:["Software Development","Algorithms","Data Structures","APIs","Git","REST","React/Flutter","SQL/NoSQL","Unit Testing","CI/CD"],
+      eng:["Modeling","CAD","Simulation","Thermodynamics","Materials","Lean","Six Sigma","Design for Manufacturing"],
+      med:["Clinical Skills","Patient Care","Diagnosis","EMR","Case Presentation","Teamwork","Medical Ethics"],
+      pharm:["Pharmacology","Clinical Pharmacy","Dispensing","Drug Safety","Compounding","Patient Counseling"],
+      biz:["Strategy","Marketing","Market Research","Excel","Financial Modeling","Product Management","OKRs"],
+      acct:["Financial Reporting","Auditing","Tax","Budgeting","IFRS","Cost Analysis","Reconciliation"],
+      lit:["Creative Writing","Editing","Proofreading","Research","Copywriting","Communication"],
+      law:["Contracts","Compliance","Legal Research","Negotiation","Policy","Due Diligence"],
+      design:["Brand Identity","Typography","Layout","UX/UI","Prototyping","Figma/Adobe"],
+      arch:["Architectural Design","BIM","3D Modeling","Rendering","Sustainability","Site Analysis"],
+      ds:["Statistics","Machine Learning","Python/R","Data Cleaning","Visualization","A/B Testing"],
+      psy:["Counseling","Assessment","Behavioral Analysis","Report Writing","Communication","Ethics"]
+    };
+
+    const PROJECTS={
+      cs:["تطبيق مهام بواجهة جميلة + مزامنة محلية","API صغير مع توثيق Swagger","لوحة بيانات تفاعلية لبيانات عامة"],
+      eng:["تصميم ذراع آلي بسيط ومحاكاته","نموذج ثلاثي لقطعة ميكانيكية مع تقرير تصنيع","تحسين عملية إنتاج بأدوات Lean"],
+      med:["ملخص حالات افتراضية مع تدفّق قرار","كتيّب توعية صحية لموضوع محدد","عرض تقديمي عن إرشادات علاجية"],
+      pharm:["نشرة دوائية مبسطة","مقارنة أشكال صيدلانية وتأثيرها","Sheet للتداخلات الدوائية"],
+      biz:["تحليل سوق + خطة تسويق","Dashboard مقاييس لعميل افتراضي","Case Study استراتيجية مختصرة"],
+      acct:["قائمة دخل وميزانية لشركة افتراضية","لوحة تتبع مصروفات شهرية","Template IFRS لمؤسسة صغيرة"],
+      lit:["مقال تحليلي طويل","دليل أسلوب تحرير للسوشال","سلسلة نقد قصيرة"],
+      law:["ملخص عقود شائعة مع شروح","دليل امتثال لشركة ناشئة","مذكرة قانونية نموذجية"],
+      design:["هوية بصرية لمبادرة","نموذج واجهة (Figma)","ملصقات لحملة"],
+      arch:["Concept لمساحة عامة + مخطط","مشروع إسكان صغير","لوحة تصور حضري"],
+      ds:["تحليل بيانات مفتوحة + تقرير","نموذج تنبؤ + تقييم","لوحة تفاعلية لمدينة/رياضة"],
+      psy:["دليل مهارات تواصل","نشرة توعوية صحية","خطة تدخل سلوكي"]
+    };
+
+    function defaultPlan(topIds){
+      const base=[
+        {id:"w1", text:"تحديث السيرة وLinkedIn بصيغة حديثة", done:false},
+        {id:"w2", text:"تجهيز Cover Letter عامة", done:false},
+        {id:"topx", text:(()=>{const top=topIds[0]||"cs"; const map={
+          cs:"نشر مشروع برمجي على GitHub مع README",
+          ds:"نشر تحليل بيانات مع Notebook",
+          design:"رفع نموذج واجهة على Behance",
+          biz:"بناء لوحة KPIs لمجال تهتم به",
+          eng:"نشر تقرير تصميم/محاكاة",
+          med:"تلخيص حالة طبية افتراضية",
+          pharm:"إعداد نشرة دوائية مبسطة",
+          acct:"تصميم Template تقارير مالية",
+          law:"صياغة عقد نموذجي وتعليقات",
+          lit:"نشر مقالة طويلة بجودة مجلة",
+          arch:"Concept معماري مع رندرة",
+          psy:"بروتوكول تدخل سلوكي تعليمي"
+        }; return map[top] || "إنجاز مشروع مصغر مرتبط بتخصصك ونشره";})(), done:false},
+        {id:"w3", text:"التقديم على 5 فرص خلال أسبوع", done:false},
+        {id:"w4", text:"تمارين مقابلات مع صديق", done:false},
+        {id:"w5", text:"حضور فعالية/ملتقى واحد", done:false},
+        {id:"w6", text:"إضافة مشروع جديد للـ Portfolio", done:false},
+        {id:"w7", text:"تواصل مع 3 أشخاص بالمجال", done:false},
+        {id:"w8", text:"تعلم مهارة صغيرة مكملة", done:false},
+        {id:"w9", text:"إرسال 10 طلبات موجهة + متابعة", done:false},
+      ];
+      return base;
+    }
+
+    const INTERVIEW_QS = {
+      cs:["احكِ عن مشروع استخدمت فيه هياكل بيانات.","كيف تختار بين REST وGraphQL؟","تحدّي واجهته في فريق وكيف حللته؟"],
+      eng:["صف تجربة نمذجة/محاكاة قمت بها.","كيف تتعامل مع قيود تصنيع في التصميم؟","موقف حسّنت فيه عملية إنتاج."],
+      med:["قصة حالة صعبة وكيف اتخذت القرار؟","كيف تتعامل مع ضغط المناوبات؟","أخلاقيات المهنة في موقف واقعي؟"],
+      pharm:["مثال على تداخل دوائي وكيف توعّي المريض.","التعامل مع وصفة غير واضحة.","كيف تضمن جودة التركيبات؟"],
+      biz:["كيف تقيس نجاح حملة تسويقية؟","قرار تجاري صعب اتخذته.","تعاملت مع تعارض بين فرق كيف؟"],
+      acct:["كيف تتعامل مع الفروقات في التسويات؟","خبرتك مع IFRS؟","موسم الذروة كيف تدير الوقت؟"],
+      lit:["كيف تبني حجة نقدية متماسكة؟","تعاملت مع نص مترجم صعب؟","أسلوبك في التحرير؟"],
+      law:["كيف تصيغ بندًا يراعي المخاطر؟","موقف تفاوضي ناجح.","إدارة تضارب مصالح؟"],
+      design:["نهجك في بناء هوية بصرية؟","كيف تختبر UX؟","تعاملت مع ملاحظات عميل متناقضة؟"],
+      arch:["كيف توازن بين الجمالية والوظيفية؟","مثال على استدامة في مشروع.","التعامل مع ميزانية محدودة؟"],
+      ds:["التعامل مع بيانات ناقصة؟","متى تختار نموذج بسيط؟","قصة Insight أثّر على قرار."],
+      psy:["موقف تطلب تعاطف وحدود مهنية.","كيف تقيس أثر تدخل؟","التعامل مع مقاومة المسترشد؟"]
+    };
+
+    function packState(){
+      const data={a:answers,c:compareIds,p:plan};
+      return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    }
+    function unpackState(s){
+      try{ return JSON.parse(decodeURIComponent(escape(atob(s)))) }catch{return null}
+    }
+
+    function renderGraduateTools(){
+      const results=computeScores(answers); const top=results.slice(0,3).map(r=>r.id);
+
+      const kwRoot=document.getElementById("cvKeywords"); kwRoot.innerHTML="";
+      const set=new Set();
+      top.forEach(id=>(KEYWORDS[id]||[]).forEach(k=>set.add(k)));
+      if(set.size===0) "Communication, Teamwork, Problem Solving".split(", ").forEach(k=>set.add(k));
+      [...set].slice(0,30).forEach(k=>{
+        const pill=document.createElement("span"); pill.className="pill"; pill.textContent=k; kwRoot.appendChild(pill);
+      });
+      document.getElementById("copyKeywordsBtn").onclick=()=>{
+        const text=[...kwRoot.querySelectorAll(".pill")].map(x=>x.textContent).join(", ");
+        navigator.clipboard?.writeText(text);
+        alert("تم نسخ الكلمات المفتاحية!");
+      };
+
+      const prRoot=document.getElementById("projectIdeas"); prRoot.innerHTML="";
+      const projList=[]; top.forEach(id=>projList.push(...(PROJECTS[id]||[])));
+      if(!projList.length) projList.push("مشروع عام: دراسة حالة مختصرة ونشرها");
+      projList.slice(0,9).forEach((p,i)=>{
+        const card=document.createElement("div");
+        const id="proj-"+i;
+        const majorId=top[0]||"cs";
+        card.className="card p-3 text-sm";
+        card.innerHTML=`
+          ${iconCardHTML(majorId,"فكرة مشروع","")}
+          <div class="mt-2">${p}</div>
+          <div class="mt-2">
+            <button class="btn" data-addplan="${id}">➕ أضِف للخطة</button>
+          </div>
+        `;
+        card.querySelector(`[data-addplan="${id}"]`).addEventListener("click",()=>addTaskToPlan(p));
+        prRoot.appendChild(card);
+      });
+
+      if(!plan.length) { plan = defaultPlan(top); writeState("plan",plan); }
+      renderPlan();
+
+      const tabRoot=document.getElementById("interviewMajorTabs");
+      const listRoot=document.getElementById("interviewQs");
+      tabRoot.innerHTML=""; listRoot.innerHTML="";
+      const majorsForTabs=[...new Set([...top, ...compareIds, "cs","eng","biz"])].slice(0,6);
+      majorsForTabs.forEach(id=>{
+        const m=MAJORS.find(x=>x.id===id); if(!m) return;
+        const b=document.createElement("button");
+        b.className="btn"; b.textContent=m.name; b.onclick=()=>renderQsFor(id);
+        tabRoot.appendChild(b);
+      });
+      function renderQsFor(id){
+        const qs=INTERVIEW_QS[id]||["عرّف بنفسك.","لماذا هذا التخصص؟","ماذا أضفت في آخر مشروع؟"];
+        listRoot.innerHTML="";
+        qs.forEach(q=>{
+          const row=document.createElement("div");
+          row.className="card p-3 flex items-center justify-between gap-2";
+          row.innerHTML=`<div class="text-sm">${q}</div><button class="btn-ghost text-xs">نسخ</button>`;
+          row.querySelector("button").onclick=()=>{ navigator.clipboard?.writeText(q); };
+          listRoot.appendChild(row);
+        });
+        document.getElementById("copyQsBtn").onclick=()=>{
+          navigator.clipboard?.writeText(qs.join("\n- "));
+          alert("تم نسخ الأسئلة!");
+        };
+      }
+      if(majorsForTabs.length) renderQsFor(majorsForTabs[0]);
+    }
+
+    function renderPlan(){
+      const root=document.getElementById("planList"); root.innerHTML="";
+      let done=0;
+      plan.forEach((t,idx)=>{
+        const row=document.createElement("label");
+        row.className="card p-3 flex items-start gap-3 text-sm";
+        row.innerHTML=`
+          <input type="checkbox" ${t.done?"checked":""} data-idx="${idx}">
+          <div class="grow"><div>${t.text}</div></div>
+          <button class="btn-ghost text-xs" data-del="${idx}">حذف</button>
+        `;
+        row.querySelector(`[data-idx="${idx}"]`).addEventListener("change",(e)=>{
+          plan[idx].done=e.target.checked; writeState("plan",plan); renderPlan();
+        });
+        row.querySelector(`[data-del="${idx}"]`).addEventListener("click",()=>{
+          plan.splice(idx,1); writeState("plan",plan); renderPlan();
+        });
+        if(t.done) done++;
+        root.appendChild(row);
+      });
+      const pct = plan.length? Math.round((done/plan.length)*100) : 0;
+      document.getElementById("planPercent").textContent=pct+"%";
+      document.getElementById("planProgress").style.width=pct+"%";
+    }
+    function addTaskToPlan(text){
+      plan.push({id:"c"+Date.now(), text, done:false});
+      writeState("plan",plan); renderPlan();
+    }
+    document.getElementById("addCustomTask").addEventListener("click",()=>{
+      const t=prompt("أدخل نص المهمة المخصّصة:"); if(!t) return; addTaskToPlan(t);
+    });
+    document.getElementById("clearPlan").addEventListener("click",()=>{
+      if(confirm("متأكد من مسح الخطة؟")){ plan=[]; writeState("plan",plan); renderPlan(); }
+    });
+
+    /* === مشاركة النتيجة كرابط === */
+    document.getElementById("shareBtn").addEventListener("click",()=>{
+      const hash=packState();
+      const url=location.origin+location.pathname+"#"+hash;
+      navigator.clipboard?.writeText(url);
+      alert("تم نسخ رابط نتيجتك! الصقه لمشاركته.");
+    });
+    if(location.hash.length>1){
+      const data=unpackState(location.hash.slice(1)); if(data){
+        answers=data.a||answers; compareIds=data.c||compareIds; plan=data.p||plan;
+        writeState("answers",answers); writeState("compare",compareIds); writeState("plan",plan);
+      }
+    }
+
+    /* === إعدادات الثيم === */
+    darkToggle.addEventListener("change",()=>{ document.documentElement.setAttribute("data-theme", darkToggle.checked?"dark":"light"); });
+    neutralToggle.addEventListener("change",()=>{ document.body.style.setProperty("--ind", neutralToggle.checked?"#64748b":"#4f46e5"); });
+
+    /* === تحكم عام === */
+    document.getElementById("resetBtn").addEventListener("click",()=>{
+      answers=Object.fromEntries(QUESTIONS.map(q=>[q.key,5]));
+      compareIds=[]; plan=[];
+      writeState("answers",answers); writeState("compare",compareIds); writeState("plan",plan);
+      document.getElementById("search").value="";
+      renderQuestions(); renderResults(); renderCompare(); renderPlan();
+    });
+    document.getElementById("clearSearch").addEventListener("click",()=>{ search.value=""; renderGuide(); });
+    document.getElementById("search").addEventListener("input", renderGuide);
+    if(startBtn){ startBtn.addEventListener("click",()=>document.getElementById("quiz").scrollIntoView({behavior:"smooth"})); }
+
+    /* === محاكي مقابلة مع مؤقّت (الأداة الجديدة رقم 6) === */
+    let miInt = null, miT = 90;
+    function pickInterviewPool(){
+      const top = computeScores(answers).slice(0,3).map(r=>r.id);
+      const pools = top.map(id => (INTERVIEW_QS[id] || []));
+      const flat = pools.flat().length ? pools.flat() : (INTERVIEW_QS.cs||[]);
+      return flat;
+    }
+    function miStartTimer(){
+      clearInterval(miInt);
+      miT = 90;
+      document.getElementById("miTimer").textContent = miT;
+      miInt = setInterval(()=>{
+        miT--;
+        document.getElementById("miTimer").textContent = miT;
+        if(miT<=0) clearInterval(miInt);
+      }, 1000);
+    }
+    function miNewQ(){
+      const pool = pickInterviewPool();
+      const q = pool[Math.floor(Math.random()*pool.length)];
+      document.getElementById("miQuestion").textContent = q;
+      miStartTimer();
+    }
+    const btnN = document.getElementById("miNew");
+    const btnC = document.getElementById("miCopy");
+    if(btnN){ btnN.onclick = miNewQ; }
+    if(btnC){ btnC.onclick = ()=> {
+      const q = document.getElementById("miQuestion").textContent;
+      navigator.clipboard?.writeText(q);
+    }; }
+
+    /* === تشغيل أولي === */
+    renderQuestions();
+    renderResults();
+  </script>
+</body>
+</html>
